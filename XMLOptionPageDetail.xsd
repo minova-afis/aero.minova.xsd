@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormTypes.xsd"/>
+	<xs:include schemaLocation="XMLFormDoc.xsd"/>
+	<xs:include schemaLocation="XMLFormEventHandling.xsd"/>
+	<xs:include schemaLocation="XMLFormControls.xsd"/>
+	<xs:include schemaLocation="XMLOptionPageGrid.xsd"/>
+	<!-- Auslagern -->
+	<xs:complexType name="detail">
+		<xs:sequence maxOccurs="unbounded" minOccurs="1">
+			<xs:element maxOccurs="1" minOccurs="0" name="head" type="head"/>
+			<!-- Kein Head mehr, deshalb mindestens 1 Page -->
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="page" type="page"/>
+		</xs:sequence>
+		<!-- Entweder oder -->
+		<xs:attribute name="procedure-suffix" type="xs:NCName"/>
+		<xs:attribute name="procedure-prefix" type="xs:NCName" use="optional" default="op">
+			<xs:annotation>
+				<xs:documentation>Prozedurprefix (z.B. 'op', 'sp' usw.)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="import" type="xs:NCName"/>
+		<!-- /Entweder oder -->
+		<!-- optional -->
+		<xs:attribute name="clear-after-save" type="xs:boolean"/>
+		<xs:attribute default="true" name="button-delete-visible" type="xs:boolean"/>
+		<xs:attribute default="true" name="button-new-visible" type="xs:boolean"/>
+		<xs:attribute default="false" name="button-block-visible" type="xs:boolean"/>
+		<xs:attribute default="true" name="button-cancel-visible" type="xs:boolean"/>
+		<xs:attribute default="false" name="button-copy-visible" type="xs:boolean"/>
+		<xs:attribute default="true" name="button-save-visible" type="xs:boolean"/>
+		<xs:attribute default="false" name="delete-requires-all-params" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>True, wenn die Delete-Funktion alle Parameter braucht</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="false" name="read-default-values" type="xs:boolean"/>
+		<xs:attribute default="false" name="execute-always" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>True, wenn die Prozeduren ausgeführt werden sollen, auch wenn es keine Datenänderungen gibt.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="class" type="xs:string"/>
+		<xs:attribute name="documentation" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Falls das Detail durch eine Klasse dargestellt wird, kann hier die zugehörige Dokumentation im DocBook-Format angegeben werden. Die
+					Erweiterungen für Sprache und und Länderkürzel bitte nicht mit angeben! Beispiel: &lt;detail class="DetailClass" documentation="DetailClass" /&gt; Hier
+					wird, je nach Sprache, die DetailClass.doc.xml oder DetailClass_SPRACHE.doc.xml gesucht. 
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="id" type="xs:NCName"/>
+		<xs:attribute name="type">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="masterdata"/>
+					<xs:enumeration value="booking"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute default="false" name="custom" type="xs:boolean"/>
+		<xs:attribute name="layout">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="expandable"/>
+					<xs:enumeration value="default"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="offline" type="xs:boolean" default="false">
+			<xs:annotation>
+				<xs:documentation>Falls der ganze Detailbereich offline ist, muss das procedure-suffix zwar trotzdem angegeben werden, aber es werden keine Prozeduren verwendet.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<!-- optional -->
+	</xs:complexType>
+	<xs:complexType name="events">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="onclick" type="onclick"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="onbinder" type="onbinder"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="value-change" type="value-change"/>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="head">
+		<xs:sequence maxOccurs="1" minOccurs="1">
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
+			</xs:choice>
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:choice maxOccurs="unbounded" minOccurs="0">
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="field"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="separator" type="separator"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" ref="grid"/>
+				</xs:choice>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="section" type="section"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+	<xs:complexType name="page">
+		<xs:sequence maxOccurs="1" minOccurs="1">
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
+			</xs:choice>
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:choice maxOccurs="unbounded" minOccurs="0">
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="field"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" name="separator" type="separator"/>
+					<xs:element maxOccurs="unbounded" minOccurs="0" ref="grid"/>
+				</xs:choice>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="section" type="section"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="table" type="layout-table">
+					<xs:annotation>
+						<xs:documentation>
+							<p xmlns="http://purl.oclc.org/dsdl/schematron"> Mit diesem Tag kann man ein spezifisches Layout definieren. Man legt dann innerhalb des Tags einzelne row-Elemente an, die dann wiederum mit
+								column-Elementen gefüllt werden.
+							</p>
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="text" type="xs:string" use="required"/>
+		<xs:attribute name="icon" type="xs:NCName"/>
+		<xs:attribute name="id" type="xs:NCName"/>
+		<xs:attribute default="true" name="visible" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="section">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:choice maxOccurs="1" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
+			</xs:choice>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="field"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="separator" type="separator"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="grid"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="text" type="xs:string" use="required"/>
+		<xs:attribute name="icon" type="xs:NCName"/>
+		<xs:attribute name="id" type="xs:NCName"/>
+	</xs:complexType>
+	<xs:complexType name="separator">
+		<xs:attribute name="text" type="xs:string" use="required"/>
+		<xs:attribute name="icon" type="xs:NCName"/>
+		<xs:attribute name="id" type="xs:NCName"/>
+		<xs:attribute name="number-columns-spanned" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:enumeration value="4"/>
+					<xs:enumeration value="2"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

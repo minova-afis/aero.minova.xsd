@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormTypes.xsd"/>
+	<xs:include schemaLocation="XMLFormDoc.xsd"/>
+	<xs:complexType name="toolbar">
+		<xs:annotation>
+			<xs:documentation>Erstellt eine Toolbar mit Buttons</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="button" type="button"/>
+		</xs:sequence>
+		<!--<xs:attribute name="flat" type="xs:boolean" use="optional" default="false"/> -->
+	</xs:complexType>
+	<xs:complexType name="button">
+		<xs:annotation>
+			<xs:documentation>Erstellt einen Button</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+		</xs:sequence>
+		<xs:attribute name="id" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Eindeutiger Bezeichner dieses Knopfes. Wird beim Event-Handling benutzt (refid)</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="enabled" type="xs:boolean" use="optional" default="true">
+			<xs:annotation>
+				<xs:documentation>True wenn der Knopf deaktiviert ist. Mit dynamic-Element kann das Attribut verändert werden</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="icon" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Name eines Icons (mit '.ico')</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="text" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Text innerhalb vom Knopf</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="refers-to" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>definiert den Bezug des Buttons auf eine Element mit der angegebenen id</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

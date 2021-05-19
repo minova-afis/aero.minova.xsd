@@ -1,0 +1,669 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormTypes.xsd"/>
+	<xs:complexType name="serviceevent">
+		<xs:annotation>
+			<xs:documentation>Versendet ein ServiceEvent</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="registry-param" type="registry-param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-param" type="ref-param"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="on-message-jscript" type="xs:string">
+					<xs:annotation>
+						<xs:documentation>JScript, der ausgeführt wird sobald eine Nachricht von der Gegenstelle ankommt. Zusätzlich verfügbare Variablen sind 'message'(String)
+							und 'severity'(Integer)
+						</xs:documentation>
+					</xs:annotation>
+				</xs:element>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="class" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Event-Klasse</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="service" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Diensteintrag in der Registrierung/XBS (z.B. MessageServer)
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="wait-for-answer" type="xs:int" use="optional" default="300">
+			<xs:annotation>
+				<xs:documentation>Wenn gesetzt, dann wartet der Event-Sender auf Log-Nachrichten des Empfängers innerhalb der gegebenen Frist. Die Antworten werden per
+					Notifier dem Benutzer angezeigt
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="reload" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>Ist der Werte auf "true" gesetzt, dann wird der Detailbereich nach dem Ausführen es Events neu geladen.
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="command">
+		<xs:annotation>
+			<xs:documentation>Versendet ein Command</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-param" type="ref-param"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="class" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Command-Klasse</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="set">
+		<xs:annotation>
+			<xs:documentation>Setzt Felder auf gegebene Werte</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="unbounded">
+			<xs:element name="field" type="fieldset"/>
+		</xs:sequence>
+	</xs:complexType>
+
+	<xs:complexType name="jscript" mixed="true">
+		<xs:annotation>
+			<xs:documentation>
+				Führt ein JSkript aus (siehe Java Rhino Dokumentation).<br/>
+				Verfügbare Variablen sind:<br/>
+				(1) alle Feldwerte als Objects der Maske/Optionpage mit den gleichen Namen wie die Feldnamen<br/>
+				(2) alle Feld-Definitionen als Field-Objekte mit dem Präfix 'Def'. Hier können Properties gesetzt werden<br/>
+				(3) alle Feldwerte als Objects der Parent-Maske mit dem 'Parent_' Präfix<br/>
+				(4) 'app' = Application-Object<br/>
+				(5) 'bundle' = aktuelle Maske/OptionPage als Bundle<br/>
+				(6) 'table' = Wertetabelle in der aktuellen Maske (== 'bundle.valueTable')<br/>
+				(7) 'search' = Suchtabelle, wenn vorhanden<br/>
+				(8) 'tools' mit den Methoden open(String url/file), print(String file),<br/>
+				get(String field) liefert den Object-Wert, set(String field, Object value),<br/>
+				setProp(String field, String prop, String value) setzt eine Property (visible etc.) im gewünschten Feld<br/>
+				setProp(String prop, String value) setzt eine Property in der Maske<br/>
+				tools.getSQLValue("tItem", "KeyLong", KeyLong, "KeyText")) liefert 'KeyText' aus der Tabelle an der Stelle 'KeyLong'=KeyLong<br/>
+			</xs:documentation>
+		</xs:annotation>
+	</xs:complexType>
+
+	<xs:complexType name="fieldset">
+		<xs:annotation>
+			<xs:documentation>Feldwert</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="name" type="xs:string" use="required">
+			<!-- Eigentlich nur für Enums wichtig -->
+			<xs:annotation>
+				<xs:documentation>Wert dieses Parameters</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="value" type="xs:string" use="optional">
+			<!-- Eigentlich nur für Enums wichtig -->
+			<xs:annotation>
+				<xs:documentation>Wert dieses Parameters</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="instance">
+		<xs:annotation>
+			<xs:documentation>Erstellt eine Klasseninstanz und speichert sie in einem Objektpool unter dem namen object-name
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="registry-param" type="registry-param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-param" type="ref-param"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="class" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Klassenname</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="object-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Objektname (Variablenname). Muss für object-access=form eindeutig innerhalb der Form sein und für object-access=application innerhalb
+					aller Masken!
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="form" name="object-access" use="optional">
+			<xs:annotation>
+				<xs:documentation>Lebenszyklus dieser Variable.</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="form">
+						<xs:annotation>
+							<xs:documentation>Dieses Objekt lebt nur solange die Form lebt. Danach wird die Variable gelöscht.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="application">
+						<xs:annotation>
+							<xs:documentation>Dieses Objekt lebt solange die gesamte Applikation lebt! Man kann auf dieses Objekt auch aus anderen Masken zugreifen.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="method">
+		<xs:annotation>
+			<xs:documentation>Führt eine Methode innerhalb eines definierten Objektes aus. Die Objekte können mit instance angelegt werden.
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="registry-param" type="registry-param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-param" type="ref-param"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="ref-object-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Objektname. Kann sowohl lokal sein (access=form), als auch gloabal aus anderen Masken (access=application)
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="return-object-name" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>Return-Objekt - falls vorhanden - kan mittels dieses Attributs gespeichert werden. Der Zugriff wird über return-object-access definiert
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="method-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Methodenname innerhalb des Objektes.</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="form" name="return-object-access" use="optional">
+			<xs:annotation>
+				<xs:documentation>Lebenszyklus der return Variable. Nur wenn return-object-name definiert ist dieses Attribut nützlich
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="form">
+						<xs:annotation>
+							<xs:documentation>Dieses Objekt lebt nur solange die Form lebt. Danach wird die Variable gelöscht.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="application">
+						<xs:annotation>
+							<xs:documentation>Dieses Objekt lebt solange die gesamte Applikation lebt! Man kann auf dieses Objekt auch aus anderen Masken zugreifen.
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="param">
+		<xs:annotation>
+			<xs:documentation>Konstruktor Parameter</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:annotation>
+				<xs:documentation>Ist nur wichtig für benutzerdefinierte Datentypen, die mit einem bestimmten Konstruktor aufgerufen werden müssen
+				</xs:documentation>
+			</xs:annotation>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="registry-param" type="registry-param"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-param" type="ref-param"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="type" use="required">
+			<xs:annotation>
+				<xs:documentation>Datentyp. Kann auch eine Klasse sein - dann muss man ggf. die Konstruktorparameter als childs dieses Tags anlegen. Rekursion ist möglich.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:union>
+					<xs:simpleType>
+						<xs:restriction base="xs:token">
+							<xs:enumeration value="long"/>
+							<xs:enumeration value="int"/>
+							<xs:enumeration value="float"/>
+							<xs:enumeration value="double"/>
+							<xs:enumeration value="boolean"/>
+							<xs:enumeration value="byte"/>
+							<xs:enumeration value="char"/>
+							<xs:enumeration value="short"/>
+							<xs:enumeration value="String"/>
+							<xs:enumeration value="date"/>
+							<xs:enumeration value="Object[]"/>
+						</xs:restriction>
+					</xs:simpleType>
+					<!-- Sollte durch xs:pattern ersetzt sein -->
+					<xs:simpleType>
+						<xs:restriction base="xs:string">
+							<xs:pattern value=".+"/>
+							<!--<xs:minLength value="1"/>-->
+						</xs:restriction>
+					</xs:simpleType>
+				</xs:union>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="value" type="xs:string" use="optional">
+			<!-- Eigentlich nur für Enums wichtig -->
+			<xs:annotation>
+				<xs:documentation>Wert dieses Parameters</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="registry-param">
+		<xs:annotation>
+			<xs:documentation>Konstruktor Parameter</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="type" use="required">
+			<xs:annotation>
+				<xs:documentation>Datentype</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="long"/>
+					<xs:enumeration value="int"/>
+					<xs:enumeration value="float"/>
+					<xs:enumeration value="double"/>
+					<xs:enumeration value="boolean"/>
+					<xs:enumeration value="byte"/>
+					<xs:enumeration value="char"/>
+					<xs:enumeration value="short"/>
+					<xs:enumeration value="String"/>
+					<xs:enumeration value="date"/>
+					<xs:enumeration value="Object[]"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="registry-key" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Registrierungsschlüssel relativ zum Applikationsschlüssel
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="false" name="user-registry" type="xs:boolean" use="optional">
+			<xs:annotation>
+				<xs:documentation>True, wenn die Benutzerregistrierung verwendet werden soll. Default ist die Local-Machine.l
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="ref-param">
+		<xs:annotation>
+			<xs:documentation>Konstruktor Parameter</xs:documentation>
+		</xs:annotation>
+		<xs:attribute default="String" name="type">
+			<xs:annotation>
+				<xs:documentation>Datentyp. Kann leer bleiben, wenn der Typ vom Feld übernommer werden soll.
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="long"/>
+					<xs:enumeration value="int"/>
+					<xs:enumeration value="float"/>
+					<xs:enumeration value="double"/>
+					<xs:enumeration value="boolean"/>
+					<xs:enumeration value="byte"/>
+					<xs:enumeration value="char"/>
+					<xs:enumeration value="short"/>
+					<xs:enumeration value="String"/>
+					<xs:enumeration value="date"/>
+					<xs:enumeration value="Object[]"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute default="KeyLong" name="ref-value" use="optional">
+			<xs:annotation>
+				<xs:documentation>Ist nur wichtig für Lookups</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="KeyLong"/>
+					<xs:enumeration value="KeyText"/>
+					<xs:enumeration value="Description"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="ref-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>SQL-Name von einem Feld</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="messagebox">
+		<xs:annotation>
+			<xs:documentation>Eine MessageBox</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="message" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Nachricht in der MessageBox</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="title" type="xs:string" use="optional">
+			<xs:annotation>
+				<xs:documentation>Überschrift der MessageBox</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="notifier" type="xs:boolean" use="optional" default="false">
+			<xs:annotation>
+				<xs:documentation>True wenn die MessageBox nicht als Fenster sondern als Tip/Notifier dargestellt werden soll
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="info" name="style" use="optional">
+			<xs:annotation>
+				<xs:documentation>MessageBox-Style</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="info">
+						<xs:annotation>
+							<xs:documentation>MessageBox mit Information</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="warning">
+						<xs:annotation>
+							<xs:documentation>MessageBox mit einer Warnung</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="error">
+						<xs:annotation>
+							<xs:documentation>MessageBox mit einem Fehler</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="open">
+		<xs:annotation>
+			<xs:documentation>Öffnet eine Datei/URL</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="dynamic" type="dynamic"/>
+		</xs:sequence>
+		<xs:attribute name="url" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Ziel des zu öffnenden Dokuments/URL</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="wizard">
+		<xs:annotation>
+			<xs:documentation>Öffnet einen Assistent (Wizard)</xs:documentation>
+		</xs:annotation>
+		<xs:sequence minOccurs="0" maxOccurs="1">
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="dynamic" type="dynamic"/>
+		</xs:sequence>
+		<xs:attribute name="wizardname" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Name des zu öffnenden Assistents</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="binder">
+		<xs:annotation>
+			<xs:documentation>Führt eine Binder-Aktion aus</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="action" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="read">
+						<xs:annotation>
+							<xs:documentation>Führt eine Read-Aktion im Binder aus
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="save">
+						<xs:annotation>
+							<xs:documentation>Führt eine Save-Aktion im Binder aus
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="delete">
+						<xs:annotation>
+							<xs:documentation>Führt eine Delete-Aktion im Binder aus
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="clear">
+						<xs:annotation>
+							<xs:documentation>Führt eine Clear-Aktion im Binder aus
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="event-param">
+		<xs:annotation>
+			<xs:documentation>Ein Parameter der Prozedur</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="field-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Feldname, entspricht dem name-Eintrag eines Fields
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="type" use="optional" default="INPUT">
+			<xs:annotation>
+				<xs:documentation>Bestimmt die Datenübertragungsrichtung</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="INPUT"/>
+					<xs:enumeration value="OUTPUT"/>
+					<xs:enumeration value="INPUTOUTPUT"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:element name="procedure">
+		<xs:annotation>
+			<xs:documentation>Führt eine Datenbankprozedur aus</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="event-param"/>
+			</xs:sequence>
+			<xs:attribute name="name" type="xs:NCName" use="required">
+				<xs:annotation>
+					<xs:documentation>Voller Prozedurname</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+
+	<xs:complexType name="onbinder">
+		<xs:annotation>
+			<xs:documentation>Tritt auf, wenn der Binder etwas tut</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="messagebox" type="messagebox"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="binder" type="binder"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="procedure"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="serviceevent" type="serviceevent"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="command" type="command"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="instance" type="instance"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="method" type="method"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="set" type="set"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="open"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="wizard" type="wizard"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="jscript" type="jscript"/>
+			</xs:choice>
+			<xs:element maxOccurs="1" minOccurs="0" name="onfail" type="onfail"/>
+		</xs:sequence>
+		<xs:attribute name="action" use="required">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="beforeread">
+						<xs:annotation>
+							<xs:documentation>Tritt auf vor dem Lesen</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="beforesave">
+						<xs:annotation>
+							<xs:documentation>Tritt auf vor dem Speichern</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="beforedelete">
+						<xs:annotation>
+							<xs:documentation>Tritt auf vor dem Löschen</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="beforeclear">
+						<xs:annotation>
+							<xs:documentation>Tritt auf vor dem Clear</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="userdefined">
+						<xs:annotation>
+							<xs:documentation>Tritt auf, bevor ein benutzerdefiniertes Skript ausgeführt wird
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="read">
+						<xs:annotation>
+							<xs:documentation>Tritt auf nach dem Lesen</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="save">
+						<xs:annotation>
+							<xs:documentation>Tritt auf nach dem Speichern</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="delete">
+						<xs:annotation>
+							<xs:documentation>Tritt auf nach dem Löschen</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="clear">
+						<xs:annotation>
+							<xs:documentation>Tritt auf nach dem Clear</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+					<xs:enumeration value="userdefined">
+						<xs:annotation>
+							<xs:documentation>Tritt auf, nachdem ein benutzerdefiniertes Skript ausgeführt wird
+							</xs:documentation>
+						</xs:annotation>
+					</xs:enumeration>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="onclick">
+		<xs:annotation>
+			<xs:documentation>Tritt auf, wenn eine Komponente angeklickt wird</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="messagebox" type="messagebox"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="binder" type="binder"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="procedure"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="serviceevent" type="serviceevent"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="command" type="command"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="instance" type="instance"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="method" type="method"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="set" type="set"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="open"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="wizard" type="wizard"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="jscript" type="jscript"/>
+			</xs:choice>
+			<xs:element maxOccurs="1" minOccurs="0" name="onfail" type="onfail"/>
+		</xs:sequence>
+		<xs:attribute name="refid" type="xs:NCName" use="required">
+			<xs:annotation>
+				<xs:documentation>Entweder der Name eines Fields oder ID eines Controls
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="value-change">
+		<xs:annotation>
+			<xs:documentation>Tritt auf, wenn der Wert einer Komponente geändert wird
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="messagebox" type="messagebox"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="binder" type="binder"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="procedure"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="serviceevent" type="serviceevent"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="command" type="command"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="instance" type="instance"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="method" type="method"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="set" type="set"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="open"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="jscript" type="jscript"/>
+			</xs:choice>
+			<xs:element maxOccurs="1" minOccurs="0" name="onfail" type="onfail"/>
+		</xs:sequence>
+		<xs:attribute name="type" use="optional" default="BOTH">
+			<xs:annotation>
+				<xs:documentation>Bestimmt die gewünschte Quelle der Änderung</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="USER"/>
+					<xs:enumeration value="SYSTEM"/>
+					<xs:enumeration value="BOTH"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="field-name" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Feldname. Mit dem prefix 'Parent_' wird der Feldname des übergeordneten Bundles gecheckt
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+
+	<xs:complexType name="onfail">
+		<xs:annotation>
+			<xs:documentation>Wird ausgeführt, wenn die Aktionen innerhalb eines Events einen Fehler liefern
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:choice maxOccurs="unbounded" minOccurs="0">
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="messagebox" type="messagebox"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="binder" type="binder"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" ref="procedure"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="serviceevent" type="serviceevent"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="command" type="command"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="instance" type="instance"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="method" type="method"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="set" type="set"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="open" type="open"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="wizard" type="wizard"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="jscript" type="jscript"/>
+			</xs:choice>
+		</xs:sequence>
+	</xs:complexType>
+</xs:schema>

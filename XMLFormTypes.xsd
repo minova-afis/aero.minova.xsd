@@ -1,0 +1,341 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormDoc.xsd"/>
+	<xs:complexType name="percentage">
+		<xs:attribute default="0" name="decimals" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="100"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute default="-100.0" name="min-value" type="xs:float" use="optional"/>
+		<xs:attribute default="100.0" name="max-value" type="xs:float" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="lookup">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="param" type="type-param"/>
+		</xs:sequence>
+		<xs:attribute name="key-long-name" type="xs:NCName" use="optional"/>
+		<xs:attribute name="key-text-name" type="xs:NCName" use="optional"/>
+		<xs:attribute name="description-name" type="xs:string" use="optional"/>
+		<xs:attribute name="procedure-prefix" type="xs:NCName" use="optional"/>
+		<xs:attribute name="table" type="xs:NCName" use="optional"/>
+		<xs:attribute name="filter-blocked" type="xs:boolean" use="optional" default="false"/>
+		<xs:attribute name="filter-last-action" type="xs:boolean" use="optional" default="true"/>
+		<xs:attribute name="form" type="xs:string" use="optional"/>
+		<xs:attribute name="use-resolve-params" type="xs:boolean" use="optional" default="false"/>
+	</xs:complexType>
+	<xs:complexType name="number">
+		<xs:attribute default="0" name="decimals" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="11"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="min-value" type="xs:float" use="optional"/>
+		<xs:attribute name="max-value" type="xs:float" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="bignumber">
+		<xs:attribute default="0" name="decimals" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="11"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="min-value" type="xs:float" use="optional"/>
+		<xs:attribute name="max-value" type="xs:float" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="text">
+		<xs:attribute default="50" name="length" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:int">
+					<xs:minInclusive value="1"/>
+					<xs:maxInclusive value="1024"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="editor">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="ref-field" type="ref-field"/>
+		</xs:sequence>
+		<xs:attribute name="editor" type="xs:NCName" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="money">
+		<xs:attribute default="2" name="decimals" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:minInclusive value="0"/>
+					<xs:maxInclusive value="10"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="min-value" type="xs:float" use="optional"/>
+		<xs:attribute name="max-value" type="xs:float" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="boolean">
+		<xs:attribute default="false" name="tristate" use="optional" type="xs:boolean"/>
+	</xs:complexType>
+	<xs:complexType name="color">
+	</xs:complexType>
+	<!-- wird vom editor (vom Typ IBindingHandler) verwendet. Siehe #2122 -->
+	<xs:complexType name="ref-field">
+		<xs:attribute name="field-name" type="xs:string" use="required"/>
+		<xs:attribute name="type" type="xs:string" use="required"/>
+	</xs:complexType>
+	<!-- Parameter String Type -->
+	<xs:complexType name="param-string">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="field"/>
+		</xs:sequence>
+		<xs:attribute name="xml-file" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="type-param">
+		<xs:attribute name="field-name" type="xs:string" use="required"/>
+	</xs:complexType>
+	<xs:complexType name="dynamic" mixed="true">
+		<xs:annotation>
+			<xs:documentation>Mit diesem Element kann der Wert eines Attributs des Eltern-Elements dynamisch gemacht werden. Der Text-Inhalt dieses Elements
+			</xs:documentation>
+		</xs:annotation>
+		<xs:attribute name="property" type="xs:string" use="required">
+			<xs:annotation>
+				<xs:documentation>Attributs des Eltern-Elements, z.B. 'read-only', 'required', 'text'...
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<!-- Ausgelagert -->
+	<xs:complexType name="field">
+		<xs:sequence>
+			<xs:choice maxOccurs="1" minOccurs="1">
+				<xs:element name="number" type="number"/>
+				<xs:element name="bignumber" type="bignumber"/>
+				<xs:element name="lookup" type="lookup"/>
+				<xs:element name="percentage" type="percentage"/>
+				<xs:element name="text" type="text"/>
+				<xs:element name="short-date"/>
+				<xs:element name="long-date"/>
+				<xs:element name="short-time"/>
+				<xs:element name="long-time"/>
+				<xs:element name="date-time"/>
+				<xs:element name="week-day"/>
+				<xs:element name="editor" type="editor"/>
+				<xs:element name="money" type="money"/>
+				<xs:element name="param-string" type="param-string"/>
+				<xs:element name="void"/>
+				<xs:element name="boolean" type="boolean"/>
+				<xs:element name="color" type="color"/>
+			</xs:choice>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
+			<xs:element minOccurs="0" maxOccurs="unbounded" name="msg">
+				<xs:complexType>
+					<xs:attribute name="key" type="xs:string" use="required"/>
+					<xs:attribute name="type" use="optional" default="okcancel">
+						<xs:simpleType>
+							<xs:restriction base="xs:string">
+								<xs:enumeration value="okcancel"/>
+								<xs:enumeration value="yesnocancel"/>
+								<xs:enumeration value="yesno"/>
+							</xs:restriction>
+						</xs:simpleType>
+					</xs:attribute>
+				</xs:complexType>
+			</xs:element>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+		</xs:sequence>
+		<xs:attribute name="tab-index" type="xs:integer" use="optional"/>
+		<!--xs:attribute name="tab-index" type="xs:IDREF"/ -->
+		<xs:attribute name="name" type="xs:ID" use="required"/>
+		<xs:attribute name="text" type="xs:string" use="optional"/>
+		<xs:attribute name="default" type="xs:string" use="optional"/>
+		<xs:attribute default="true" name="required" type="xs:boolean"/>
+		<xs:attribute default="false" name="offline" type="xs:boolean">
+			<xs:annotation>
+				<xs:documentation>Wenn true, dann wird das Feld nicht mit den Standard-Prozeduren verwendet. Kann für die Darstellung abgeleiteter Werte verwendet werden
+					oder als Input für procedure-Actions
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute default="false" name="total" type="xs:boolean"/>
+		<xs:attribute default="0" name="sql-index" type="xs:integer" use="optional"/>
+		<xs:attribute name="validation-order" type="xs:integer" use="optional"/>
+		<xs:attribute default="2" name="number-columns-spanned" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:integer">
+					<xs:enumeration value="2"/>
+					<xs:enumeration value="4"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="number-rows-spanned" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="auto"/>
+					<xs:enumeration value="1"/>
+					<xs:enumeration value="2"/>
+					<xs:enumeration value="3"/>
+					<xs:enumeration value="4"/>
+					<xs:enumeration value="5"/>
+					<xs:enumeration value="6"/>
+					<xs:enumeration value="7"/>
+					<xs:enumeration value="8"/>
+					<xs:enumeration value="9"/>
+					<xs:enumeration value="10"/>
+					<xs:enumeration value="fill"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="fill" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="none"/>
+					<xs:enumeration value="horizontal"/>
+					<xs:enumeration value="vertical"/>
+					<xs:enumeration value="both"/>
+					<xs:enumeration value="toright"/>
+					<xs:enumeration value="toleft"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute name="key-type" use="optional">
+			<xs:simpleType>
+				<xs:restriction base="xs:token">
+					<xs:enumeration value="primary"/>
+					<xs:enumeration value="user"/>
+					<xs:enumeration value="static"/>
+					<xs:enumeration value="none"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+		<xs:attribute default="true" name="visible" type="xs:boolean" use="optional"/>
+		<xs:attribute default="@unit.StandardVolume" name="unit-text" type="xs:string" use="optional"/>
+		<xs:attribute default="true" name="read-only" type="xs:boolean" use="optional"/>
+		<!--xs:attribute name="length" type="xs:integer"/ -->
+	</xs:complexType>
+	<xs:complexType name="layout-table">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="row" type="layout-table-row">
+				<xs:annotation>
+					<xs:documentation>
+						<p xmlns="http://purl.oclc.org/dsdl/schematron"> Die Tabelle wird in logische Zeilen und Spalten unterteilt. Die Spalten haben nicht unbedingt die gleiche Breite.
+						</p>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:element>
+		</xs:sequence>
+		<xs:attribute name="column-count" type="xs:int" use="required">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron"> Die Anzahl der Spalten innerhalb der Tabelle wird in diesem Attribut festgelegt.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="layout-table-row">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:element maxOccurs="unbounded" minOccurs="1" name="column" type="layout-table-column"/>
+		</xs:sequence>
+		<xs:attribute name="name" type="xs:ID" use="required"/>
+		<xs:attribute name="text" type="xs:string" use="optional"/>
+	</xs:complexType>
+	<xs:complexType name="layout-table-column">
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+			<xs:choice>
+				<xs:element maxOccurs="1" minOccurs="0" name="label" type="label"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="field" type="field"/>
+			</xs:choice>
+		</xs:sequence>
+		<xs:attribute name="number-columns-spanned" type="xs:int" default="1">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron">
+						Dieses Feld definiert, wie viele Spalten für das Feld / den Bezeichner verwendet werden. Sie werden dann als
+						<emph>ein</emph>
+						Feld zusammengefasst.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="text" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron">
+						Mit diesem Wert kann man der Spalte eine Bezeichnung geben. Sie wird nicht automatisch angezeigt. Sie kann aber von
+						<emph>label</emph>
+						verwendet werden.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+	</xs:complexType>
+	<xs:complexType name="label">
+		<xs:annotation>
+			<xs:documentation>
+				<p xmlns="http://purl.oclc.org/dsdl/schematron">
+					Dieses Element dient zum Platzieren von Elementen auf der Oberfläche. Es kann nur im Element
+					<emph>table</emph>
+					verwendet werden.
+				</p>
+			</xs:documentation>
+		</xs:annotation>
+		<xs:sequence>
+			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+		</xs:sequence>
+		<xs:attribute name="field" type="xs:IDREF">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron">Wenn der Wert des Labels über ein Feld definiert wird, muss hier das entsprechende Feld angegeben werden.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="row" type="xs:IDREF">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron">
+						Wenn der Wert des Labels über eine Zeile definiert wird, muss hier das entsprechende Feld angegeben werden. Es wird der Wert von
+						<emph>text</emph>
+						aus der Zeile verwendet.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="text" type="xs:string">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron">
+						Wenn der Wert des Labels im
+						<emph>label</emph>
+						definiert wird, muss hier der Wert stehen.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+		</xs:attribute>
+		<xs:attribute name="align" default="right">
+			<xs:annotation>
+				<xs:documentation>
+					<p xmlns="http://purl.oclc.org/dsdl/schematron"> Labels können rechts- und linksbündig angeordnet werden. Dieses Attribut sollte nur bei Bezeichnern verwendet werden, die als Überschrift einer
+						Tabellenspalte dienen. Direkte Feldbezeichner sollten nicht mit dem Attribut belegt werden.
+					</p>
+				</xs:documentation>
+			</xs:annotation>
+			<xs:simpleType>
+				<xs:restriction base="xs:string">
+					<xs:enumeration value="left"/>
+					<xs:enumeration value="right"/>
+				</xs:restriction>
+			</xs:simpleType>
+		</xs:attribute>
+	</xs:complexType>
+</xs:schema>

@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormTypes.xsd"/>
+	<xs:include schemaLocation="XMLFormDoc.xsd"/>
+	<xs:element name="grid">
+		<xs:annotation>
+			<xs:documentation>Erstellt ein Grid</xs:documentation>
+		</xs:annotation>
+		<xs:complexType>
+			<xs:sequence maxOccurs="1" minOccurs="1">
+				<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
+				<xs:choice maxOccurs="1" minOccurs="1">
+					<xs:choice maxOccurs="unbounded" minOccurs="0">
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="field" type="field"/>
+						<xs:element maxOccurs="unbounded" minOccurs="0" name="toolbar" type="toolbar"/>
+					</xs:choice>
+				</xs:choice>
+				<xs:element maxOccurs="unbounded" minOccurs="0" name="events" type="events"/>
+			</xs:sequence>
+			<xs:attribute name="procedure-prefix" type="xs:NCName" use="optional" default="op">
+				<xs:annotation>
+					<xs:documentation>Prozedurprefix (z.B. 'op', 'sp' usw.)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="procedure-suffix" type="xs:NCName" use="required">
+				<xs:annotation>
+					<xs:documentation>Prozedursuffix (ohne 'op')</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="false" name="read-requires-all-params" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn die Read-Funktion alle Parameter braucht</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="false" name="delete-requires-all-params" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn die Delete-Funktion alle Parameter braucht</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="false" name="value-required" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn mindestens eine Zeile eingegeben werden muss</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="true" name="button-insert-visible" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn der Einfügen-Knopf sichtbar sein soll</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="true" name="button-delete-visible" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn der Löschen-Knopf sichtbar sein soll</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="false" name="read-only" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn keine Werte ins Grid eingegeben werden können.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute default="15" name="number-rows-spanned" type="xs:integer">
+				<xs:annotation>
+					<xs:documentation>Höhe des Grids (1 Row = 20 px)</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="key-cols" type="xs:string">
+				<xs:annotation>
+					<xs:documentation>Definiert die Schlüsselspalten</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="title" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Grid-Überschrift vom Grid. Erscheint über dem Grid oder in der TabPage, wenn es sich ein Stand-Alone Grid handelt
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="sort-by" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Kommaseparierte Feldliste der Standard Sortierreihenfolge</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="group-by" type="xs:string" use="optional">
+				<xs:annotation>
+					<xs:documentation>Kommaseparierte Feldliste der Standard Gruppierung</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="icon" type="xs:NCName">
+				<xs:annotation>
+					<xs:documentation>TabPage-Icon, wenn es sich um ein Stand-Alone Grid handelt</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="data-handler" type="xs:string">
+				<xs:annotation>
+					<xs:documentation> Wenn dieser Wert einen Klassennamen definiert, der geladen werden kann, wird diese Klasse für die Funktionen verwendet.
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="id" type="xs:NCName">
+				<xs:annotation>
+					<xs:documentation>ID, die für die Referenzierung verwendet werden kann</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="helper-class" type="xs:NCName">
+				<xs:annotation>
+					<xs:documentation>Helper-Klasse mit zusätzlichen Funktionen</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+			<xs:attribute name="fill">
+				<xs:annotation>
+					<xs:documentation>Definiert die fill-Eigenschaft des Grids (wird noch nicht verwendet außer "auto")</xs:documentation>
+				</xs:annotation>
+				<xs:simpleType>
+					<xs:restriction base="xs:token">
+						<xs:enumeration value="none">
+							<xs:annotation>
+								<xs:documentation>Kein Dock</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="horizontal">
+							<xs:annotation>
+								<xs:documentation>Platz horizontal ausfüllen</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="vertical">
+							<xs:annotation>
+								<xs:documentation>Platz vertikal ausfüllen</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="both">
+							<xs:annotation>
+								<xs:documentation>Platz horizontal und vertikal ausfüllen</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="toright">
+							<xs:annotation>
+								<xs:documentation>Platz nach rechts ausfüllen</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="toleft">
+							<xs:annotation>
+								<xs:documentation>Platz nach links ausfüllen</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+						<xs:enumeration value="auto">
+							<xs:annotation>
+								<xs:documentation>Mit Klick auf "Resize" passt sich die Größe automatisch an</xs:documentation>
+							</xs:annotation>
+						</xs:enumeration>
+					</xs:restriction>
+				</xs:simpleType>
+			</xs:attribute>
+			<xs:attribute default="true" name="clear-after-new" type="xs:boolean"/>
+			<xs:attribute default="false" name="execute-always" type="xs:boolean">
+				<xs:annotation>
+					<xs:documentation>True, wenn die Prozeduren ausgeführt werden sollen, auch wenn es keine Datenänderungen gibt.</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>

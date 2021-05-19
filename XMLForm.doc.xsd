@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+	<xs:include schemaLocation="XMLFormDetail.doc.xsd"/>
+	<!-- Form -->
+	<xs:element name="form">
+		<xs:complexType>
+			<xs:sequence>
+				<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="detail" type="detail"/>
+				<xs:element maxOccurs="1" minOccurs="0" name="events" type="events"/>
+			</xs:sequence>
+			<xs:attribute name="title" type="xs:string" use="required">
+				<xs:annotation>
+					<xs:documentation>
+						<p xmlns="http://purl.oclc.org/dsdl/schematron"> Der Titel der Maske. Wird die Maske als OptionPage verwendet, wird dieser Titel als Bezeichnung der Section (TabPage) verwenden.
+						</p>
+					</xs:documentation>
+				</xs:annotation>
+			</xs:attribute>
+		</xs:complexType>
+	</xs:element>
+</xs:schema>
