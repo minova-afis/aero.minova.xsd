@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="XMLFormDetail.xsd" />
+	<xs:include schemaLocation="form-detail.xsd" />
+	<xs:include schemaLocation="form-events.xsd" />
 	<!-- Form -->
 	<xs:element name="form">
 		<xs:complexType>
 			<xs:sequence>
-				<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook" />
 				<xs:element maxOccurs="1" minOccurs="0" name="index-view" type="index-view" />
 				<xs:element maxOccurs="1" minOccurs="0" name="detail" type="detail" />
 				<xs:element maxOccurs="1" minOccurs="0" name="events" type="events" />

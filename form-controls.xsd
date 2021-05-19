@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="XMLFormTypes.xsd"/>
-	<xs:include schemaLocation="XMLFormDoc.xsd"/>
+	<xs:include schemaLocation="form-types.xsd"/>
 	<xs:complexType name="toolbar">
 		<xs:annotation>
 			<xs:documentation>Erstellt eine Toolbar mit Buttons</xs:documentation>
@@ -17,7 +16,6 @@
 		</xs:annotation>
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 		</xs:sequence>
 		<xs:attribute name="id" type="xs:string" use="optional">
 			<xs:annotation>

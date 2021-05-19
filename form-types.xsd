@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="XMLFormDoc.xsd"/>
 	<xs:complexType name="percentage">
 		<xs:attribute default="0" name="decimals" use="optional">
 			<xs:simpleType>
@@ -148,7 +147,6 @@
 					</xs:attribute>
 				</xs:complexType>
 			</xs:element>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 		</xs:sequence>
 		<xs:attribute name="tab-index" type="xs:integer" use="optional"/>
 		<!--xs:attribute name="tab-index" type="xs:IDREF"/ -->
@@ -221,7 +219,6 @@
 	</xs:complexType>
 	<xs:complexType name="layout-table">
 		<xs:sequence>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="row" type="layout-table-row">
 				<xs:annotation>
 					<xs:documentation>
@@ -242,7 +239,6 @@
 	</xs:complexType>
 	<xs:complexType name="layout-table-row">
 		<xs:sequence>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:element maxOccurs="unbounded" minOccurs="1" name="column" type="layout-table-column"/>
 		</xs:sequence>
 		<xs:attribute name="name" type="xs:ID" use="required"/>
@@ -250,7 +246,6 @@
 	</xs:complexType>
 	<xs:complexType name="layout-table-column">
 		<xs:sequence>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:choice>
 				<xs:element maxOccurs="1" minOccurs="0" name="label" type="label"/>
 				<xs:element maxOccurs="1" minOccurs="0" name="field" type="field"/>
@@ -289,9 +284,6 @@
 				</p>
 			</xs:documentation>
 		</xs:annotation>
-		<xs:sequence>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
-		</xs:sequence>
 		<xs:attribute name="field" type="xs:IDREF">
 			<xs:annotation>
 				<xs:documentation>

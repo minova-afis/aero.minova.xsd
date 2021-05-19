@@ -1,6 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="XMLFormTypes.xsd"/>
+	<xs:include schemaLocation="form-types.xsd"/>
+	
+	<xs:complexType name="events">
+		<xs:sequence>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="onclick" type="onclick"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="onbinder" type="onbinder"/>
+			<xs:element maxOccurs="unbounded" minOccurs="0" name="value-change" type="value-change"/>
+		</xs:sequence>
+	</xs:complexType>
+	
 	<xs:complexType name="serviceevent">
 		<xs:annotation>
 			<xs:documentation>Versendet ein ServiceEvent</xs:documentation>

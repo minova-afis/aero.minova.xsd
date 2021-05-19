@@ -1,10 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<xs:include schemaLocation="XMLFormTypes.xsd"/>
-	<xs:include schemaLocation="XMLFormDoc.xsd"/>
-	<xs:include schemaLocation="XMLFormEventHandling.xsd"/>
-	<xs:include schemaLocation="XMLFormControls.xsd"/>
-	<xs:include schemaLocation="XMLOptionPageGrid.xsd"/>
+	<xs:include schemaLocation="form-types.xsd"/>
+	<xs:include schemaLocation="form-events.xsd"/>
+	<xs:include schemaLocation="form-controls.xsd"/>
+	<xs:include schemaLocation="optionpage-grid.xsd"/>
 	<!-- Auslagern -->
 	<xs:complexType name="detail">
 		<xs:sequence maxOccurs="unbounded" minOccurs="1">
@@ -74,17 +73,9 @@
 		</xs:attribute>
 		<!-- optional -->
 	</xs:complexType>
-	<xs:complexType name="events">
-		<xs:sequence>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="onclick" type="onclick"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="onbinder" type="onbinder"/>
-			<xs:element maxOccurs="unbounded" minOccurs="0" name="value-change" type="value-change"/>
-		</xs:sequence>
-	</xs:complexType>
 	<xs:complexType name="head">
 		<xs:sequence maxOccurs="1" minOccurs="1">
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:choice maxOccurs="1" minOccurs="0">
 				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
 				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
@@ -102,7 +93,6 @@
 	<xs:complexType name="page">
 		<xs:sequence maxOccurs="1" minOccurs="1">
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:choice maxOccurs="1" minOccurs="0">
 				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
 				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
@@ -133,7 +123,6 @@
 	<xs:complexType name="section">
 		<xs:sequence>
 			<xs:element maxOccurs="unbounded" minOccurs="0" name="dynamic" type="dynamic"/>
-			<xs:element maxOccurs="1" minOccurs="0" name="docbook" type="docbook"/>
 			<xs:choice maxOccurs="1" minOccurs="0">
 				<xs:element maxOccurs="unbounded" minOccurs="0" name="button" type="button"/>
 				<xs:element maxOccurs="1" minOccurs="0" name="toolbar" type="toolbar"/>
