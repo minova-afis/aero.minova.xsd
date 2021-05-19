@@ -1,5 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<xs:schema elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
-	<!-- Für Dokumentation: OptionPage = Form da IndexView nicht dokumentiert wird -->
-	<xs:include schemaLocation="XMLForm.doc.xsd"/>
-</xs:schema>
